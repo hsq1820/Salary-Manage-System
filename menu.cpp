@@ -211,8 +211,7 @@ void menu::input(){
         cout << "      2.根据文档录入数据"<<endl;
         cout << "      3.返回\n\n\n\n";
         cout << "****************************" << endl;
-        int in=_getch();
-        switch (in)
+        switch (_getch())
         {
         case '1':
             input1();
@@ -396,10 +395,10 @@ void menu::output(){
         else if(job=='A'||job=='a'){
             j="经理";
         }
-        cout << left << setw(11) << employee.getid()
+        cout << left << setw(8) << employee.getid()
              << setw(10) << employee.getname()
-             << setw(10) << employee.getgender()
-             << setw(10) << employee.getage()
+             << setw(9) << employee.getgender()
+             << setw(8) << employee.getage()
              << setw(15) << j
              << setw(10) << employee.getplace()
              << setw(10) << employee.getsalary()
@@ -408,12 +407,6 @@ void menu::output(){
     }
     cout<<endl<<endl;
 
-    //统计有几种不同的部门
-    for (const auto& employee : emps) {
-        if ((find(departments.begin(), departments.end(), employee.getplace()) == departments.end())&&employee.getplace()!="无") {
-            departments.push_back(employee.getplace());
-        }
-    }
     double allsum = 0;
     for(const auto& department : departments){
         double sum = 0;
@@ -421,7 +414,7 @@ void menu::output(){
         cout << left << setw(11) << "职工号"<< setw(10) << "姓名"<< setw(10) << "销售额"<< '\n';
         for (const auto& employee : emps) {
             if (employee.getplace() == department) {
-                cout << left << setw(11) << employee.getid()
+                cout << left << setw(8) << employee.getid()
                     << setw(10) << employee.getname()
                     << setw(10) << employee.getvalue()
                     << '\n';
@@ -472,6 +465,7 @@ void backups1(){
              << '\n';
     }
     outFile1.close();
+
     ofstream outFile2("value.txt");
     if (!outFile2) {
         cerr << "无法打开文件";
