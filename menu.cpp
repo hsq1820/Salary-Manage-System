@@ -19,7 +19,7 @@ void menu::showmenu(){
     cout << "       工资管理系统\n\n";
     cout << "      1.数据录入" << endl;
     cout << "      2.数据统计" << endl;
-    cout << "      3.数据打印" << endl;
+    cout << "      3.数据打印及修改" << endl;
     cout << "      4.数据备份" << endl;
     cout << "      5.退出\n\n\n\n";
     cout << "****************************" << endl;
@@ -243,7 +243,7 @@ void menu::statistics(){
             departments.push_back(employee.getplace());
         }
     }
-    
+    //计算销售经理的销售额
     for(const auto& department : departments){
         double sum = 0,smvalue;
         employees *s;
@@ -266,10 +266,10 @@ void menu::statistics(){
     sort(emps.begin(), emps.end(), [](const employees &a, const employees &b) {
         return a.getsalary() < b.getsalary();
     });
-    for(int i=0;i<emps.size();i++){
+    for(int i=0;i<emps.size();i++){//设置排名
         emps[i].setrank(i+1);
     }
-
+    // 按照职工号排序
     sort(emps.begin(), emps.end(), [](const employees &a, const employees &b) {
         return a.getid() < b.getid();
     });
@@ -277,6 +277,105 @@ void menu::statistics(){
     _getch();
 }
 
+void update(){
+    cout<<"输入已有职工号修改信息，输入新的职工号增加信息，只输入职工号删除信息"<<endl;
+    cout<<"职业栏输入对应字母A.经理B.技术员C.销售员D.销售经理"<<endl;
+    cout<<"经理固定月薪8000，可不输入工资"<<endl;
+    cout<<"技术员工资可先输入1再输入输入工作时间，自动计算"<<endl;
+    cout<<"销售员和销售经理工资可先输入1再输入销售额，自动计算"<<endl;
+    cout<<"部门没有的话输入\"无\""<<endl;
+    cout<<"输入0结束"<<endl;
+    int id=1,age,rank,worktime;
+    string name,gender,place;
+    char job;
+    double salary,value;
+    cout<<left<<setw(11)<<"职工号"<<setw(10)<<"姓名"<<setw(10)<<"性别"<<setw(10)<<"年龄"<<setw(15)<<"职业"<<setw(10)<<"部门"<<setw(10)<<"工资"<< '\n';
+    while (1)
+    {
+        cin>>id;
+        if(id==0) break;
+        if(cin.peek()=='\n'){
+            for (auto it = emps.begin(); it != emps.end(); it++) {
+                if (it->getid() == id) {
+                    emps.erase(it);
+                    break;
+                }
+            }
+            continue;
+        }
+        cin>>name;
+        if(name=="0") break;
+        for (auto it = emps.begin(); it != emps.end(); it++) {
+            if (it->getid() == id) {
+                emps.erase(it);
+                break;
+            }
+        }
+        cin>>gender>>age>>job>>place;
+        if(job=='A'||job=='a'){
+            //不换行则输入工资，换行则工资为8000
+            if(cin.peek()=='\n'){
+                salary=8000;
+            }
+            else cin>>salary;
+        }
+        else cin>>salary;
+        switch (job)
+        {
+        case 'B':
+        case 'b':
+            {
+                if (salary==1)
+                {
+                    cin>>worktime;
+                    salary=worktime*100;
+                }
+                emps.emplace_back(id,name,gender,age,job,place,salary);
+                break;
+            }
+        case 'C':
+        case 'c':
+            {
+                if (salary==1)
+                {
+                    cin>>value;
+                    salary=0.04*value;
+                }
+                emps.emplace_back(id,name,gender,age,job,place,salary);
+                if (salary==1)
+                {
+                    emps.back().setvalue(value);
+                }
+                break;
+            }
+        case 'D':
+        case 'd':
+            {
+                if (salary==1){
+                    cin>>value;
+                    salary=0;
+                }
+                emps.emplace_back(id,name,gender,age,job,place,salary);
+                if (salary==1)
+                {
+                    emps.back().setvalue(value);
+                }
+                break;
+            }
+        case 'A':
+        case 'a':
+            {
+                emps.emplace_back(id,name,gender,age,job,place,salary);
+                break;
+            }
+        default:
+            {
+                cerr<<"错误的职业"<<endl;
+                continue;
+            }
+        }
+    }
+}
 void menu::output(){
     system("cls");
     cout<<left<<setw(11)<<"职工号"<<setw(10)<<"姓名"<<setw(10)<<"性别"<<setw(10)<<"年龄"<<setw(15)<<"职业"<<setw(10)<<"部门"<<setw(10)<<"工资"<<setw(10)<<"排名"<< '\n';
@@ -333,8 +432,10 @@ void menu::output(){
         cout << "销售额合计：" << sum << "\n\n";
     }
     cout << "总销售额：" << allsum << '\n';
-    cout<<"按任意键返回"<<endl;
-    _getch();
+    cout<<"按enter键增删改，按其他任意键返回"<<endl;
+    if(_getch()==13){
+        update();
+    }
 }
 
 void backups1(){
