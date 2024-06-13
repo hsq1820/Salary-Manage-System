@@ -472,11 +472,6 @@ void backups1(){
         return;
     }
 
-    for (const auto& employee : emps) {
-        if ((find(departments.begin(), departments.end(), employee.getplace()) == departments.end())&&employee.getplace()!="无") {
-            departments.push_back(employee.getplace());
-        }
-    }
     double allsum = 0;
     for(const auto& department : departments){
         double sum = 0;
